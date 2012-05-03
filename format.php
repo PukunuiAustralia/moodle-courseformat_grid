@@ -18,6 +18,7 @@ $summary_status = _get_summary_visibility($course->id);
 
 echo html_writer::script('',
     $CFG->wwwroot.'/course/format/grid/lib.js');
+$PAGE->requires->js('/course/format/grid/format.js');
 
 /// Layout the whole page as three big columns (was, id="layout-table")
 ?>

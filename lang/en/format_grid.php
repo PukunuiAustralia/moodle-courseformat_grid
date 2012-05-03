@@ -15,3 +15,5 @@ $string['title'] = 'Topic title';
 $string['topic'] = 'Topic';
 $string['topic0'] = 'General';
 $string['topicoutline'] = 'Topic';
+$string['hidefromothers'] = 'Hide topic';
+$string['showfromothers'] = 'Show topic';

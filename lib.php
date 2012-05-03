@@ -243,6 +243,7 @@ function _make_block_topic0($section, $top) {
         'id' =>'section-0',
         'class'=>'section main' . ($top ? '' :' grid_section')));
 
+    echo html_writer::tag('div', '&nbsp;', array('class'=>'left side'));
     echo html_writer::tag('div', '&nbsp;', array('class'=>'right side'));
 
     echo html_writer::start_tag('div', array('class'=>'content'));
@@ -450,13 +451,13 @@ function _make_block_topics() {
     if ($editing && $has_cap_update) {
         $str_move_up    = get_string('moveup');
         $str_move_down  = get_string('movedown');        
-        $str_topic_hide = get_string('hidetopicfromothers');
-        $str_topic_show = get_string('showtopicfromothers');
+        $str_topic_hide = get_string('hidefromothers', 'format_grid');
+        $str_topic_show = get_string('showfromothers', 'format_grid');
 
         $url_pic_move_up    = $OUTPUT->pix_url('t/up');
         $url_pic_move_down  = $OUTPUT->pix_url('t/down');
-        $url_pic_topic_hide = $OUTPUT->pix_url('t/hide');
-        $url_pic_topic_show = $OUTPUT->pix_url('t/show');        
+        $url_pic_topic_hide = $OUTPUT->pix_url('i/hide');
+        $url_pic_topic_show = $OUTPUT->pix_url('i/show');        
     }
     for($section = 1; $section <= $course->numsections; $section++) {
         if (empty($sections[$section])) {
@@ -481,6 +482,7 @@ function _make_block_topics() {
             'class' => $sectionstyle));
 
         // Note, 'right side' is BEFORE content.
+        echo html_writer::tag('div', '&nbsp;', array('class'=>'left side'));
         echo html_writer::start_tag('div', array('class' => 'right side'));
 
         if ($editing && $has_cap_update) {
@@ -503,18 +505,18 @@ function _make_block_topics() {
                     'src'   => $url_pic_topic_visible,
                     'class' => 'icon ' . $op_topic_visible,
                     'alt'   => $str_topic_visible_text)),
-                array('title' => $str_topic_visible_text));                 
+                array('title' => $str_topic_visible_text, 'class' => 'editing_showhide'));                 
 
             // Add a arrow to move section up
             if ($section > 1) {
                 echo _move_section_arrow($section, $course, -1, 'up',
-                    $str_move_up, $url_pic_move_up);
+                    $str_move_up, $url_pic_move_up, 'moveup');
             }
 
             // Add a arrow to move section down
             if ($section < $course->numsections) {
                 echo _move_section_arrow($section, $course, -1, 'down',
-                    $str_move_down, $url_pic_move_down);
+                    $str_move_down, $url_pic_move_down, 'movedown');
             }
         }
 
@@ -563,7 +565,7 @@ function _make_block_topics() {
 
 function _move_section_arrow($section, $course, 
     $op_move_delta, $op_move_style, 
-    $str_move_text, $url_pic_move) {
+    $str_move_text, $url_pic_move, $anchorclass = '') {
 
     $url = new moodle_url('/course/view.php#section-'.($section + $op_move_delta), array(
         'id'      => $course->id,
@@ -578,5 +580,7 @@ function _move_section_arrow($section, $course,
                 'class' => 'icon ' . $op_move_style));   
 
     return html_writer::link($url, $img, array(
-        'title' => $str_move_text));       
+        'title' => $str_move_text,
+        'class' => $anchorclass
+    ));
 }

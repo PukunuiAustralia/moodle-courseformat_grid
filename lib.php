@@ -249,14 +249,13 @@ function _make_block_topic0($section, $top) {
     echo html_writer::start_tag('div', array('class'=>'content'));
     echo html_writer::start_tag('div', array('class'=>'summary'));
 
+    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
     if ($top) {
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 		$summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
 		echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
     } else {
         $summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
 
-        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
 		$summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
 		echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);        
     }

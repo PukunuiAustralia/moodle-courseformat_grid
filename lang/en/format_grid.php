@@ -15,3 +15,7 @@ $string['title'] = 'Topic title';
 $string['topic'] = 'Topic';
 $string['topic0'] = 'General';
 $string['topicoutline'] = 'Topic';
+
+// Moodle 2.3 Enhancement
+$string['hidefromothers'] = 'Hide topic';
+$string['showfromothers'] = 'Show topic';

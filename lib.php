@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -95,6 +95,16 @@ function callback_grid_ajax_support() {
     return $ajaxsupport;
 }
 
+/**
+ * Deletes the settings entry for the given course upon course deletion.
+ */
+function format_grid_delete_course($courseid) {
+    global $DB;
+
+    $DB->delete_records("format_grid_icon", array("courseid" => $courseid));
+    $DB->delete_records("format_grid_summary", array("courseid" => $courseid));
+}
+
 function _grid_moodle_url($url, array $params = null) {
     return new moodle_url('/course/format/grid/'.$url, $params);
 }
@@ -105,10 +115,10 @@ function _is_empty_text($text) {
             htmlentities($text, 0 /*ENT_HTML401*/, 'UTF-8', true));
 }
 
-function _grid_get_icon($course, $sectionid, $sectionnumber = 0) {
+function _grid_get_icon($courseid, $sectionid) {
     global $CFG, $DB;
 
-    if (!$sectionid)
+    if ((!$courseid) || (!$sectionid))
         return false;
 
     if (!$sectionicon = $DB->get_record('format_grid_icon',
@@ -116,10 +126,11 @@ function _grid_get_icon($course, $sectionid, $sectionnumber = 0) {
 
         $newicon                = new stdClass();
         $newicon->sectionid     = $sectionid;
+        $newicon->courseid      = $courseid;
 
         if (!$newicon->id = $DB->insert_record('format_grid_icon', $newicon, true)) {
             throw new moodle_exception('invalidrecordid', 'format_grid', '',
-                'Could not create icon. Grid format database is not ready. An admin must visit the notification section.');
+                'Could not create icon. Grid format database is not ready. An admin must visit the notifications section.');
         }
         $sectionicon = false;
     }
@@ -129,14 +140,14 @@ function _grid_get_icon($course, $sectionid, $sectionnumber = 0) {
 //get section icon, if it doesnt exist create it.
 function _get_summary_visibility($course) {
     global $CFG, $DB;
-    if (!$summary_status = $DB->get_record('format_grid_summary', array('course_id' => $course))) {
+    if (!$summary_status = $DB->get_record('format_grid_summary', array('courseid' => $course))) {
         $new_status                = new stdClass();
-        $new_status->course_id     = $course;
-        $new_status->show_summary  = 1;
+        $new_status->courseid     = $course;
+        $new_status->showsummary  = 1;
 
         if (!$new_status->id = $DB->insert_record('format_grid_summary', $new_status)) {
             throw new moodle_exception('invalidrecordid', 'format_grid', '',
-                'Could not set summary status. Grid format database is not ready. An admin must visit the notification section.');
+                'Could not set summary status. Grid format database is not ready. An admin must visit the notifications section.');
         }
         $summary_status = $new_status;
     }
@@ -260,6 +271,7 @@ function _make_block_topic0($section, $top) {
 		echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);        
     }
 
+
     if ($editing && $has_cap_update) {
         $link = html_writer::link(
             new moodle_url('editsection.php', array('id' => $thissection->id)),
@@ -322,16 +334,15 @@ function _make_block_icon_topics($without_topic0) {
         if (!empty($sections[$section])) {
             $thissection = $sections[$section];
         } else {
-            // Create a new section structure
-            $thissection = new stdClass();
-            $thissection->course = $course->id;
-            $thissection->section = $section;
-            $thissection->summary = "$str_topic $section";
-            $thissection->visible = 1;
-            if (!$thissection->id = $DB->insert_record('course_sections', $thissection)) {
-                throw new moodle_exception('invalidrecordid', 'format_grid', '',
-                    'Error inserting new topic.');
-            }
+                // This will create a course section if it doesn't exist..
+                $thissection = get_course_section($section, $course->id);
+
+                // The returned section is only a bare database object rather than
+                // a section_info object - we will need at least the uservisible
+                // field in it.
+                $thissection->uservisible = true;
+                $thissection->availableinfo = null;
+                $thissection->showavailability = 0;
             $sections[$section] = $thissection;
         }
 
@@ -367,7 +378,7 @@ function _make_block_icon_topics($without_topic0) {
             echo html_writer::start_tag('div', array('class'=>'image_holder'));
 
             $sectionicon = _grid_get_icon(
-                $course, $thissection->id, $section);
+                $course->id, $thissection->id);
 
             if(is_object($sectionicon) && !empty($sectionicon->imagepath)) {
                 echo html_writer::empty_tag('img', array(
@@ -434,6 +445,85 @@ function _make_block_show_clipboard_if_file_moving() {
     }
 }
 
+function _section_edit_controls($course, $section, $onsectionpage = false) {
+        global $PAGE, $OUTPUT;
+
+        if (!$PAGE->user_is_editing()) {
+            return array();
+        }
+
+        if (!has_capability('moodle/course:update', context_course::instance($course->id))) {
+            return array();
+        }
+
+        if ($onsectionpage) {
+            $baseurl = course_get_url($course, $section->section);
+        } else {
+            $baseurl = course_get_url($course);
+        }
+        $baseurl->param('sesskey', sesskey());
+
+        $controls = array();
+
+        $url = clone($baseurl);
+        if ($section->visible) { // Show the hide/show eye.
+            $strhidefromothers = get_string('hidefromothers', 'format_'.$course->format);
+            $url->param('hide', $section->section);
+            $controls[] = html_writer::link($url,
+                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/hide'),
+                'class' => 'icon hide', 'alt' => $strhidefromothers)),
+                array('title' => $strhidefromothers, 'class' => 'editing_showhide'));
+        } else {
+            $strshowfromothers = get_string('showfromothers', 'format_'.$course->format);
+            $url->param('show',  $section->section);
+            $controls[] = html_writer::link($url,
+                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/show'),
+                'class' => 'icon hide', 'alt' => $strshowfromothers)),
+                array('title' => $strshowfromothers, 'class' => 'editing_showhide'));
+        }
+
+        if (!$onsectionpage) {
+            $url = clone($baseurl);
+            if ($section->section > 1) { // Add a arrow to move section up.
+                $url->param('section', $section->section);
+                $url->param('move', -1);
+                $strmoveup = get_string('moveup');
+
+                $controls[] = html_writer::link($url,
+                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/up'),
+                    'class' => 'icon up', 'alt' => $strmoveup)),
+                    array('title' => $strmoveup, 'class' => 'moveup'));
+            }
+
+            $url = clone($baseurl);
+            if ($section->section < $course->numsections) { // Add a arrow to move section down.
+                $url->param('section', $section->section);
+                $url->param('move', 1);
+                $strmovedown =  get_string('movedown');
+
+                $controls[] = html_writer::link($url,
+                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/down'),
+                    'class' => 'icon down', 'alt' => $strmovedown)),
+                    array('title' => $strmovedown, 'class' => 'movedown'));
+            }
+        }
+
+        return $controls;
+    }
+
+function _section_right_content($section, $course, $onsectionpage = false) {
+        $o = '&nbsp;';
+
+        if ($section->section != 0) {
+            $controls = _section_edit_controls($course, $section, $onsectionpage);
+            if (!empty($controls)) {
+                $o = implode('<br />', $controls);
+            }
+        }
+
+        return $o;
+    }
+
 function _make_block_topics() {
     global $OUTPUT,
         $course, $sections, $editing,
@@ -480,45 +570,11 @@ function _make_block_topics() {
             'id' => 'section-' . $section,
             'class' => $sectionstyle));
 
+        // Note, 'left side' is BEFORE content.
+		echo html_writer::tag('div', html_writer::tag('span', $section), array('class' => 'left side'));	
         // Note, 'right side' is BEFORE content.
-        echo html_writer::start_tag('div', array('class' => 'right side'));
-
-        if ($editing && $has_cap_update) {
-            // Show the hide/show eye
-            if ($thissection->visible) {
-                $op_topic_visible = 'hide';
-                $str_topic_visible_text = $str_topic_hide;
-                $url_pic_topic_visible = $url_pic_topic_hide;
-            } else {
-                $op_topic_visible = 'show';
-                $str_topic_visible_text = $str_topic_show;
-                $url_pic_topic_visible = $url_pic_topic_show;
-            }
-            echo html_writer::link(
-                new moodle_url('/course/view.php#section-' . $section, array(
-                    'id'              => $course->id,
-                    $op_topic_visible => $section,
-                    'sesskey'         => sesskey())),
-                html_writer::empty_tag('img', array(
-                    'src'   => $url_pic_topic_visible,
-                    'class' => 'icon ' . $op_topic_visible,
-                    'alt'   => $str_topic_visible_text)),
-                array('title' => $str_topic_visible_text));                 
-
-            // Add a arrow to move section up
-            if ($section > 1) {
-                echo _move_section_arrow($section, $course, -1, 'up',
-                    $str_move_up, $url_pic_move_up);
-            }
-
-            // Add a arrow to move section down
-            if ($section < $course->numsections) {
-                echo _move_section_arrow($section, $course, -1, 'down',
-                    $str_move_down, $url_pic_move_down);
-            }
-        }
-
-        echo html_writer::end_tag('div');
+		$rightcontent = _section_right_content($thissection, $course);
+        echo html_writer::tag('div', $rightcontent, array('class' => 'right side'));
 
         echo html_writer::start_tag('div', array('class' => 'content'));
         if ($has_cap_vishidsect || $thissection->visible) {
@@ -530,9 +586,8 @@ function _make_block_topics() {
 
             echo html_writer::start_tag('div', array('class' => 'summary'));
 
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-			$summarytext = file_rewrite_pluginfile_urls($thissection->summary, 'pluginfile.php', $coursecontext->id, 'course', 'section', $thissection->id);
-			echo format_text($summarytext, FORMAT_HTML, $summaryformatoptions);
+            echo format_text($thissection->summary,
+                FORMAT_HTML, $summaryformatoptions);
 
             if ($editing && $has_cap_update) {
                 echo html_writer::link(

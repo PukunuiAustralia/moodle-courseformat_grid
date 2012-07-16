@@ -27,7 +27,7 @@ echo html_writer::script('',
 
             //start at 1 to skip the summary block
             //or include the summary block if it's in the grid display
-            $topic0_at_top = $summary_status->show_summary == 1;
+            $topic0_at_top = $summary_status->showsummary == 1;
             if($topic0_at_top) {
                 $topic0_at_top = _make_block_topic0(0, true);
             } ?>
@@ -64,3 +64,7 @@ echo html_writer::script('',
         }
     ?>
 </div>
+<?php
+// Include course format js module
+$PAGE->requires->js('/course/format/grid/format.js');
+?>

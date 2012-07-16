@@ -11,7 +11,7 @@ $showsummary = optional_param('showsummary', 0, PARAM_INT);
 
 //ensure format_grid_summary field status exists
 $summary_status = _get_summary_visibility($course);
-$DB->set_field('format_grid_summary', 'show_summary', $showsummary, 
-    array('course_id' => $course, 'id' => $summary_status->id));
+$DB->set_field('format_grid_summary', 'showsummary', $showsummary, 
+    array('courseid' => $course, 'id' => $summary_status->id));
 
 redirect("../../view.php?id=$course");

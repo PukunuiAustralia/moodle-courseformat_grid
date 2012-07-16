@@ -57,11 +57,11 @@ if ($mform->is_cancelled()) {
     //Someone has hit the 'cancel' button
     redirect(new moodle_url($CFG->wwwroot . '/course/view.php?id='.$course->id));
 } else if ($formdata = $mform->get_data()) { //Form has been submitted    
-    /* Delete old images associated with this course section */
+    /* Delete old images associated with this course section id */
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'course', 'section', $sectionid);
     
-    if ($newfilename = $mform->get_new_filename('assignment_file')) {
+    if ($newfilename = $mform->get_new_filename('icon_file')) {
         /* Resize the new image and save it */
 
         $created = time();
@@ -76,7 +76,7 @@ if ($mform->is_cancelled()) {
             'timemodified' => $created);
 
         $temp_file = $mform->save_stored_file(
-            'assignment_file',
+            'icon_file',
             $storedfile_record['contextid'],
             $storedfile_record['component'],
             $storedfile_record['filearea'],

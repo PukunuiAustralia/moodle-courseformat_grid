@@ -10,7 +10,7 @@ class image_form extends moodleform {
         $instance = $this->_customdata;
 
         // visible elements
-        $mform->addElement('filepicker', 'assignment_file',
+        $mform->addElement('filepicker', 'icon_file',
             get_string('uploadafile'), null, $instance['options']);
 
         // hidden params

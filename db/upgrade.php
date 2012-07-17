@@ -4,7 +4,7 @@ defined('MOODLE_INTERNAL') || die();
 
 function xmldb_format_grid_upgrade($oldversion = 0) {
     global $DB;
-
+	
     $dbman = $DB->get_manager();
         
     if ($oldversion < 2011041802) {
@@ -49,5 +49,24 @@ function xmldb_format_grid_upgrade($oldversion = 0) {
         upgrade_plugin_savepoint(true, '2012011701', 'format', 'grid');
     }
 
-    return true;
+    if ($oldversion < 2012042301) {
+        $table = new xmldb_table('format_grid_icon');
+		
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'sectionid');
+        // Conditionally launch add field courseid
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+		// Add courseid to existing data.
+		$iconrecords = $DB->get_records('format_grid_icon');
+		foreach($iconrecords as $iconrecord) {
+		   $sectionid = $iconrecord->sectionid;
+		   $coursesection = $DB->get_record('course_sections', array('id' => $sectionid));
+		   $DB->set_field('format_grid_icon', 'courseid', $coursesection->course, array('sectionid' => $sectionid));
+		}
+		
+        upgrade_plugin_savepoint(true, '2012042301', 'format', 'grid');		
+	}
+	return true;
 }

@@ -1,6 +1,6 @@
 ﻿GRID COURSE FORMAT
 ============================
-Package tested in: moodle 2.1+
+Package tested in: moodle 2.2+
 
 QUICK INSTALL
 ==============
@@ -49,10 +49,10 @@ FILES
 
 * grid/styles.css
 
-  The file include in the CSS Moodle generates.
+  The file is included in the CSS that Moodle generates.
 
-* grid/backuplib.php
-  grid/restorelib.php
+* grid/backup/moodle2/backup_format_grid_plugin.class.php
+  grid/backup/moodle2/restore_format_grid_plugin.class.php
 
   Backup and restore run automatically when backing up the course.
   You can't back up the course format data independently.

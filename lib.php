@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -95,6 +95,16 @@ function callback_grid_ajax_support() {
     return $ajaxsupport;
 }
 
+/**
+ * Deletes the settings entry for the given course upon course deletion.
+ */
+function format_grid_delete_course($courseid) {
+    global $DB;
+
+    $DB->delete_records("format_grid_icon", array("courseid" => $courseid));
+    $DB->delete_records("format_grid_summary", array("course_id" => $courseid));
+}
+
 function _grid_moodle_url($url, array $params = null) {
     return new moodle_url('/course/format/grid/'.$url, $params);
 }
@@ -105,10 +115,10 @@ function _is_empty_text($text) {
             htmlentities($text, 0 /*ENT_HTML401*/, 'UTF-8', true));
 }
 
-function _grid_get_icon($course, $sectionid, $sectionnumber = 0) {
+function _grid_get_icon($courseid, $sectionid, $sectionnumber = 0) {
     global $CFG, $DB;
 
-    if (!$sectionid)
+    if ((!$courseid) || (!$sectionid))
         return false;
 
     if (!$sectionicon = $DB->get_record('format_grid_icon',
@@ -116,6 +126,7 @@ function _grid_get_icon($course, $sectionid, $sectionnumber = 0) {
 
         $newicon                = new stdClass();
         $newicon->sectionid     = $sectionid;
+        $newicon->courseid      = $courseid;
 
         if (!$newicon->id = $DB->insert_record('format_grid_icon', $newicon, true)) {
             throw new moodle_exception('invalidrecordid', 'format_grid', '',
@@ -127,11 +138,11 @@ function _grid_get_icon($course, $sectionid, $sectionnumber = 0) {
 }
 
 //get section icon, if it doesnt exist create it.
-function _get_summary_visibility($course) {
+function _get_summary_visibility($courseid) {
     global $CFG, $DB;
-    if (!$summary_status = $DB->get_record('format_grid_summary', array('course_id' => $course))) {
+    if (!$summary_status = $DB->get_record('format_grid_summary', array('course_id' => $courseid))) {
         $new_status                = new stdClass();
-        $new_status->course_id     = $course;
+        $new_status->course_id     = $courseid;
         $new_status->show_summary  = 1;
 
         if (!$new_status->id = $DB->insert_record('format_grid_summary', $new_status)) {
@@ -367,7 +378,7 @@ function _make_block_icon_topics($without_topic0) {
             echo html_writer::start_tag('div', array('class'=>'image_holder'));
 
             $sectionicon = _grid_get_icon(
-                $course, $thissection->id, $section);
+                $course->id, $thissection->id, $section);
 
             if(is_object($sectionicon) && !empty($sectionicon->imagepath)) {
                 echo html_writer::empty_tag('img', array(

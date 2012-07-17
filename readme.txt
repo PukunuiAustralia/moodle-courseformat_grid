@@ -2,13 +2,17 @@
 ============================
 Package tested in: Moodle 2.3.1+ (Build: 20120712) 2012062501.02
 
-BETA DEVELOPMENT VERSION - NOT FOR PRODUCTION SITES - G J Barnard 'http://moodle.org/user/profile.php?id=442195'
+BETA DEVELOPMENT VERSION - NOT FOR PRODUCTION SITES - Please place comments / feedback on:
+http://tracker.moodle.org/browse/CONTRIB-3769 - preferred.
+or
+http://moodle.org/mod/forum/discuss.php?d=207059
 
 QUICK INSTALL
 ==============
 Download zip package, extract the grid folder and upload this folder into course/format/.
 
-If already installed, remove the row with the 'plugin' of 'format_grid' in the 'config_plugins' table and drop the 'format_grid_icon'
+NOTE: If you have previously installed a Beta version and get the latest code you MUST:
+Remove the row with the 'plugin' of 'format_grid' in the 'config_plugins' table and drop the 'format_grid_icon'
 and 'format_grid_summary' tables before clicking on 'notifications'.
 
 ABOUT

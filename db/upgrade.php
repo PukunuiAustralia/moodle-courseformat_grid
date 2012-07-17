@@ -57,7 +57,7 @@ function xmldb_format_grid_upgrade($oldversion = 0) {
         // Launch change of sign for field id
         $dbman->change_field_unsigned($table, $field);
 
-		$field = new xmldb_field('course_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+		$field = new xmldb_field('course_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, null);
         // Launch change of sign for field id
         $dbman->change_field_unsigned($table, $field);
 		// Rename course_id
@@ -76,15 +76,23 @@ function xmldb_format_grid_upgrade($oldversion = 0) {
         // Launch change of sign for field id
         $dbman->change_field_unsigned($table, $field);
 		
-		$field = new xmldb_field('sectionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, 'imagepath');
-        // Launch change of sign for field sectionid
+		$field = new xmldb_field('sectionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, 'imagepath');
+        // Launch change of sign for field sectionid, but need to drop and recreate index to do so.
+		$index = new xmldb_index('section', XMLDB_INDEX_NOTUNIQUE, array('sectionid'));
+        $dbman->drop_index($table, $index);
         $dbman->change_field_unsigned($table, $field);
+        $dbman->add_index($table, $index);
 
         $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '1', 'sectionid');
-        // Conditionally launch add field course_id
+        // Conditionally launch add field courseid
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
-        }
+        } else {
+		    // Launch change of sign for field courseid as it was in the previous version.
+            $dbman->change_field_unsigned($table, $field);
+		}
+
+        upgrade_plugin_savepoint(true, '2012071500', 'format', 'grid');		
 	}
 	return true;
 }

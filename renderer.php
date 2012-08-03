@@ -77,6 +77,9 @@ class format_grid_renderer extends format_section_renderer_base {
         if ($editing) {
             $str_edit_summary = get_string('editsummary');
             $url_pic_edit = $this->output->pix_url('t/edit');
+        } else {
+            $url_pic_edit = false;
+            $str_edit_summary = '';
         }
         echo html_writer::start_tag('div', array('class' => 'topicscss-format'));
         echo html_writer::start_tag('div', array('id' => 'middle-column'));
@@ -129,9 +132,10 @@ class format_grid_renderer extends format_section_renderer_base {
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
      * @param bool $onsectionpage true if being printed on a single-section page
+     * @param int $sectionreturn The section to return to after an action
      * @return string HTML to output.
      */
-    protected function section_header($section, $course, $onsectionpage) {
+    protected function section_header($section, $course, $onsectionpage, $sectionreturn=0) {
         global $PAGE;
 
         $o = '';
@@ -169,11 +173,7 @@ class format_grid_renderer extends format_section_renderer_base {
 
         $context = context_course::instance($course->id);
         if ($PAGE->user_is_editing() && has_capability('moodle/course:update', $context)) {
-            $url = new moodle_url('/course/editsection.php', array('id' => $section->id));
-
-            if ($onsectionpage) {
-                $url->param('sectionreturn', 1);
-            }
+            $url = new moodle_url('/course/editsection.php', array('id' => $section->id, 'sr' => $sectionreturn));
 
             $o.= html_writer::link($url, html_writer::empty_tag('img', array('src' => $this->output->pix_url('t/edit'), 'class' => 'iconsmall edit')), array('title' => get_string('editsummary')));
         }
@@ -399,9 +399,11 @@ class format_grid_renderer extends format_section_renderer_base {
                 'class' => $sectionstyle));
 
             // Note, 'left side' is BEFORE content.
-            echo html_writer::tag('div', html_writer::tag('span', $section), array('class' => 'left side'));
+            //echo html_writer::tag('div', html_writer::tag('span', $section), array('class' => 'left side'));
+            $leftcontent = $this->section_left_content($thissection, $course, $onsectionpage);
+            echo html_writer::tag('div', $leftcontent, array('class' => 'left side'));			
             // Note, 'right side' is BEFORE content.
-            $rightcontent = $this->section_right_content($thissection, $course);
+            $rightcontent = $this->section_right_content($thissection, $course, $onsectionpage);
             echo html_writer::tag('div', $rightcontent, array('class' => 'right side'));
 
             echo html_writer::start_tag('div', array('class' => 'content'));

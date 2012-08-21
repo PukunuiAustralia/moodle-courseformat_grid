@@ -26,7 +26,7 @@ if ($week = optional_param('week', 0, PARAM_INT)) { // Weeks old section paramet
 // End backwards-compatible aliasing..
 
 $renderer = $PAGE->get_renderer('format_grid');
-if (!empty($displaysection) && $course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
+if (!empty($displaysection)) {
     $renderer->print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection);
 } else {
     echo html_writer::script('',$CFG->wwwroot.'/course/format/grid/lib.js');

@@ -1,7 +1,7 @@
 <?php
 
 $string['display_summary'] = 'move out of grid';
-$string['display_summary_alt'] = 'Move this section out of the grid';
+$string['display_summary_alt'] = 'Move this topic out of the grid';
 $string['editimage'] = 'Change image';
 $string['editimage_alt'] = 'Set or change image';
 $string['formatgrid'] = 'Grid format'; // Name to display for format
@@ -19,3 +19,4 @@ $string['topicoutline'] = 'Topic';
 // Moodle 2.3 Enhancement
 $string['hidefromothers'] = 'Hide topic';
 $string['showfromothers'] = 'Show topic';
+$string['currentsection'] = 'This topic';

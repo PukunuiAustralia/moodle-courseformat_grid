@@ -37,7 +37,7 @@ class format_grid_renderer extends format_section_renderer_base {
      * @return string HTML to output.
      */
     protected function start_section_list() {
-        return html_writer::start_tag('ul', array('class' => 'topics'));
+        return html_writer::start_tag('ul', array('class' => 'gtopics'));
     }
 
     /**
@@ -195,7 +195,8 @@ class format_grid_renderer extends format_section_renderer_base {
             return false;
 
         if ($this->topic0_at_top) {
-            echo html_writer::start_tag('ul', array('class' => 'topicscss'));
+            echo html_writer::start_tag('ul', array('class' => 'gtopics-0'));
+            //echo $this->start_section_list();
         }
         echo html_writer::start_tag('li', array(
             'id' => 'section-0',
@@ -204,6 +205,11 @@ class format_grid_renderer extends format_section_renderer_base {
         echo html_writer::tag('div', '&nbsp;', array('class' => 'right side'));
 
         echo html_writer::start_tag('div', array('class' => 'content'));
+
+        if (!$onsectionpage) {
+            echo $this->output->heading(get_section_name($course, $thissection), 3, 'sectionname');
+        }
+
         echo html_writer::start_tag('div', array('class' => 'summary'));
 
         echo $this->format_summary_text($thissection);
@@ -213,7 +219,7 @@ class format_grid_renderer extends format_section_renderer_base {
                             new moodle_url('editsection.php', array('id' => $thissection->id)), html_writer::empty_tag('img', array(
                                 'src' => $url_pic_edit,
                                 'alt' => $str_edit_summary,
-                                'class' => 'icon edit')), array('title' => $str_edit_summary));
+                                'class' => 'iconsmall edit')), array('title' => $str_edit_summary));
             echo $this->topic0_at_top ? html_writer::tag('p', $link) : $link;
         }
         echo html_writer::end_tag('div');
@@ -243,6 +249,7 @@ class format_grid_renderer extends format_section_renderer_base {
 
         if ($this->topic0_at_top) {
             echo html_writer::end_tag('ul');
+            //echo $this->end_section_list();
         }
         return true;
     }
@@ -401,7 +408,7 @@ class format_grid_renderer extends format_section_renderer_base {
             // Note, 'left side' is BEFORE content.
             //echo html_writer::tag('div', html_writer::tag('span', $section), array('class' => 'left side'));
             $leftcontent = $this->section_left_content($thissection, $course, $onsectionpage);
-            echo html_writer::tag('div', $leftcontent, array('class' => 'left side'));			
+            echo html_writer::tag('div', $leftcontent, array('class' => 'left side'));
             // Note, 'right side' is BEFORE content.
             $rightcontent = $this->section_right_content($thissection, $course, $onsectionpage);
             echo html_writer::tag('div', $rightcontent, array('class' => 'right side'));
@@ -409,10 +416,7 @@ class format_grid_renderer extends format_section_renderer_base {
             echo html_writer::start_tag('div', array('class' => 'content'));
             if ($has_cap_vishidsect || $thissection->visible) {
                 //if visible
-                if (!empty($thissection->name)) {
-                    echo format_text($this->output->heading(
-                                    $thissection->name, 3, 'sectionname'), FORMAT_HTML);
-                }
+                echo $this->output->heading(get_section_name($course, $thissection), 3, 'sectionname');
 
                 echo html_writer::start_tag('div', array('class' => 'summary'));
 
@@ -423,7 +427,7 @@ class format_grid_renderer extends format_section_renderer_base {
                             new moodle_url('editsection.php', array('id' => $thissection->id)), html_writer::empty_tag('img', array(
                                 'src' => $url_pic_edit,
                                 'alt' => $str_edit_summary,
-                                'class' => 'icon edit')), array('title' => $str_edit_summary));
+                                'class' => 'iconsmall edit')), array('title' => $str_edit_summary));
                 }
                 echo html_writer::end_tag('div');
 

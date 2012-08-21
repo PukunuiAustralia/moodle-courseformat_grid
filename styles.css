@@ -5,21 +5,57 @@
     font-size: 160%;
     font-weight: bold;
 }
-.course-content h3.sectionname {
-    background: transparent !important;
-    font-weight: normal !important;
-    font-size: 1.9em;
-    border: 0px none !important;
-    border-bottom: dashed 1px #000 !important;
-    padding: 0px !important;
-    padding-bottom: 5px !important;
+.course-content ul.gtopics h3.sectionname {
+    background: transparent;
+    font-weight: normal;
+    border: 0px none;
+    border-bottom: dashed 1px #000;
+    padding: 0px;
+    padding-bottom: 5px;
 }
-.course-content ul.topics li.section-0, .course-content ul.weeks li.section-0 {
+.course-content ul.gtopics-0 #section-0 {
     background: transparent;
     border: 0px none;
 }
+
+.course-content ul.gtopics-0 #section-0 .side {
+    width: 28px;
+}
+
 div#middle-column ul {
     list-style-type: none;
+}
+
+.course-content ul.gtopics {
+    margin:0;
+}
+
+.course-content ul.gtopics li.section {
+    list-style: none;
+    margin:5px 0 0 0;
+    padding:0;
+}
+
+.course-content ul.gtopics li.section .content {
+    margin:0 40px;
+}
+
+.course-content ul.gtopics li.section .side {
+    width:40px;
+    text-align:center;
+}
+
+.course-content ul.gtopics li.section .left {
+    float:left;
+    padding: 0px;
+}
+
+.course-content ul.gtopics li.section .right {
+    float:right;
+}
+
+.jumpmenu {
+    text-align:center;
 }
 
 /* @group Topic Icons */
@@ -32,9 +68,10 @@ div#middle-column ul {
 .course-content #iconContainer {
     overflow: auto;
     padding: 0 0 50px 0;
-    margin-left: 20px;
+    margin-left: auto;
     margin-right: auto;
 }
+
 .course-content ul.icons li {
     width: 220px;
     overflow: hidden;

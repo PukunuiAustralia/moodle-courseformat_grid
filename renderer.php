@@ -432,12 +432,7 @@ class format_grid_renderer extends format_section_renderer_base {
                 }
                 echo html_writer::end_tag('div');
 
-                if (!empty($thissection->availableinfo))
-                {
-                    echo html_writer::start_tag('div', array("class" => "availabilityinfo"));
-                    echo $thissection->availableinfo;
-                    echo html_writer::end_tag('div');
-                }
+                echo $this->section_availability_message($thissection);
 
                 print_section($course, $thissection, $mods, $modnamesused);
 
@@ -447,12 +442,8 @@ class format_grid_renderer extends format_section_renderer_base {
             } else {
                 echo html_writer::tag('h2', $this->get_title($thissection));
                 echo html_writer::tag('p', get_string('hidden_topic', 'format_grid'));
-                if (!empty($thissection->availableinfo))
-                {
-                    echo html_writer::start_tag('div', array("class" => "availabilityinfo"));
-                    echo $thissection->availableinfo;
-                    echo html_writer::end_tag('div');
-                }
+
+                echo $this->section_availability_message($thissection);
             }
 
             /* $this->section_header($thissection, $course, $onsectionpage);

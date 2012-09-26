@@ -87,7 +87,7 @@ if ($mform->is_cancelled()) {
         try {
             $fs->convert_image($storedfile_record, $temp_file,
                 GRID_ITEM_IMAGE_WIDTH,
-                GRID_ITEM_IMAGE_HEIGHT, true);
+                GRID_ITEM_IMAGE_HEIGHT, true, 50);
 
             $temp_file->delete();
             unset($temp_file);

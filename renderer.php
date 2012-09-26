@@ -283,9 +283,10 @@ class format_grid_renderer extends format_section_renderer_base {
                 $sections[$section] = $thissection;
             }
 
-            //check if course is visible to user, if so show course
-            if ($has_cap_vishidsect || $thissection->visible || !$course->hiddensections) {
+            //check if section is visible to user
+            $showsection = $has_cap_vishidsect || ($thissection->visible && ($thissection->available || $thissection->showavailability) && !$course->hiddensections);
 
+            if ($showsection) {
                 //Get the module icon
                 if ($editing && $has_cap_update) {
                     $onclickevent = "select_topic_edit(event, {$thissection->section})";
@@ -414,7 +415,7 @@ class format_grid_renderer extends format_section_renderer_base {
             echo html_writer::tag('div', $rightcontent, array('class' => 'right side'));
 
             echo html_writer::start_tag('div', array('class' => 'content'));
-            if ($has_cap_vishidsect || $thissection->visible) {
+            if ($has_cap_vishidsect || ($thissection->visible && $thissection->available)) {
                 //if visible
                 echo $this->output->heading(get_section_name($course, $thissection), 3, 'sectionname');
 
@@ -431,6 +432,13 @@ class format_grid_renderer extends format_section_renderer_base {
                 }
                 echo html_writer::end_tag('div');
 
+                if (!empty($thissection->availableinfo))
+                {
+                    echo html_writer::start_tag('div', array("class" => "availabilityinfo"));
+                    echo $thissection->availableinfo;
+                    echo html_writer::end_tag('div');
+                }
+
                 print_section($course, $thissection, $mods, $modnamesused);
 
                 if ($editing) {
@@ -439,6 +447,12 @@ class format_grid_renderer extends format_section_renderer_base {
             } else {
                 echo html_writer::tag('h2', $this->get_title($thissection));
                 echo html_writer::tag('p', get_string('hidden_topic', 'format_grid'));
+                if (!empty($thissection->availableinfo))
+                {
+                    echo html_writer::start_tag('div', array("class" => "availabilityinfo"));
+                    echo $thissection->availableinfo;
+                    echo html_writer::end_tag('div');
+                }
             }
 
             /* $this->section_header($thissection, $course, $onsectionpage);

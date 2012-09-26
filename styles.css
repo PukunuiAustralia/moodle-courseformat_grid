@@ -166,4 +166,8 @@ div#shadebox_overlay {
     right: -10px;
     cursor: pointer;
 }
+.availabilityinfo {
+    font-size:0.85em;
+    color:#aaa;
+}
 /* @end */

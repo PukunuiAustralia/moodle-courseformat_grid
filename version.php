@@ -35,7 +35,7 @@ $plugin->requires = 2012062501.03; // 2.3.1 (Build: 20120719) - Because of MDL-3
 $plugin->component = 'format_grid';
 
 // Software maturity level
-$plugin->release  = MATURITY_BETA;
+$plugin->maturity = MATURITY_BETA;
 
 // User-friendly version number
-$plugin->maturity = '2.3.1 (2012062501.03)';
+$plugin->release = '2.3.2';

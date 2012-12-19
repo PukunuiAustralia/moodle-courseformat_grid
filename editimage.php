@@ -2,7 +2,7 @@
 
 /* Imports */
 require_once("../../../config.php");
-require_once($CFG->dirroot.'/repository/lib.php');
+require_once($CFG->dirroot . '/repository/lib.php');
 require_once('./editimage_form.php');
 
 /* Script settings */
@@ -22,12 +22,12 @@ $formdata->forcerefresh = optional_param('forcerefresh', null, PARAM_INT);
 $formdata->mode = optional_param('mode', null, PARAM_ALPHA);
 
 $url = new moodle_url('/course/format/grid/editimage.php', array(
-    'contextid' => $contextid,
-    'id' => $id,
-    'offset' => $formdata->offset,
-    'forcerefresh' => $formdata->forcerefresh,
-    'userid' => $formdata->userid,
-    'mode' => $formdata->mode));
+            'contextid' => $contextid,
+            'id' => $id,
+            'offset' => $formdata->offset,
+            'forcerefresh' => $formdata->forcerefresh,
+            'userid' => $formdata->userid,
+            'mode' => $formdata->mode));
 
 /* No exactly sure what this stuff does, but it seems fairly straightforward */
 list($context, $course, $cm) = get_context_info_array($contextid);
@@ -48,19 +48,19 @@ $options = array(
     'return_types' => FILE_INTERNAL);
 
 $mform = new image_form(null, array(
-    'contextid' => $contextid,
-    'userid' => $formdata->userid,
-    'sectionid' => $sectionid,
-    'options' => $options));
+            'contextid' => $contextid,
+            'userid' => $formdata->userid,
+            'sectionid' => $sectionid,
+            'options' => $options));
 
 if ($mform->is_cancelled()) {
     //Someone has hit the 'cancel' button
-    redirect(new moodle_url($CFG->wwwroot . '/course/view.php?id='.$course->id));
+    redirect(new moodle_url($CFG->wwwroot . '/course/view.php?id=' . $course->id));
 } else if ($formdata = $mform->get_data()) { //Form has been submitted    
     /* Delete old images associated with this course section id */
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'course', 'section', $sectionid);
-    
+
     if ($newfilename = $mform->get_new_filename('icon_file')) {
         /* Resize the new image and save it */
 
@@ -76,24 +76,28 @@ if ($mform->is_cancelled()) {
             'timemodified' => $created);
 
         $temp_file = $mform->save_stored_file(
-            'icon_file',
-            $storedfile_record['contextid'],
-            $storedfile_record['component'],
-            $storedfile_record['filearea'],
-            $storedfile_record['itemid'],
-            $storedfile_record['filepath'],
-            'temp.' . $storedfile_record['filename'], true);
+                'icon_file', $storedfile_record['contextid'], $storedfile_record['component'], $storedfile_record['filearea'], $storedfile_record['itemid'], $storedfile_record['filepath'], 'temp.' . $storedfile_record['filename'], true);
 
         try {
-            $fs->convert_image($storedfile_record, $temp_file,
-                GRID_ITEM_IMAGE_WIDTH,
-                GRID_ITEM_IMAGE_HEIGHT, true, 50);
+            // Ensure the right quality setting...
+            switch ($temp_file->get_mimetype()) {
+                case 'image/jpeg':
+                    $quality = 75;
+                    break;
+
+                case 'image/png':
+                    $quality = 3;
+                    break;
+
+                default:
+                    $quality = null;
+            }
+            $fs->convert_image($storedfile_record, $temp_file, GRID_ITEM_IMAGE_WIDTH, GRID_ITEM_IMAGE_HEIGHT, true, $quality);
 
             $temp_file->delete();
             unset($temp_file);
 
-            $DB->set_field('format_grid_icon', 'imagepath',
-                $newfilename, array('sectionid' => $sectionid));
+            $DB->set_field('format_grid_icon', 'imagepath', $newfilename, array('sectionid' => $sectionid));
         } catch (Exception $e) {
             if (isset($temp_file)) {
                 $temp_file->delete();
@@ -101,8 +105,8 @@ if ($mform->is_cancelled()) {
             }
             debugging($e->getMessage());
         }
-        redirect($CFG->wwwroot . "/course/view.php?id=".$course->id);
-    } 
+        redirect($CFG->wwwroot . "/course/view.php?id=" . $course->id);
+    }
 }
 
 /* Draw the form */

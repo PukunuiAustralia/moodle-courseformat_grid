@@ -13,9 +13,11 @@ QUICK INSTALL
 ==============
 Download zip package, extract the grid folder and upload this folder into course/format/.
 
-NOTE: If you have previously installed a Beta version and get the latest code you MUST:
+NOTE: If you have previously installed a development version and get the latest code you MUST:
 Remove the row with the 'plugin' of 'format_grid' in the 'config_plugins' table and drop the 'format_grid_icon'
-and 'format_grid_summary' tables before clicking on 'notifications'.
+and 'format_grid_summary' tables in the database before clicking on 'notifications'.
+
+If upgrade fails, please perform the actions as detailed in the note above.
 
 ABOUT
 =============
@@ -72,3 +74,20 @@ FILES
 
 ROADMAP
 =============
+
+1. Working Moodle 2.4 version.
+2. Improved instructions.
+3. User definable grid row icon numbers - https://moodle.org/mod/forum/discuss.php?d=196716
+
+HISTORY
+=============
+
+13th July 2012 - Version 2.3
+1. First release for Moodle 2.3
+
+22nd August 2012 - Version 2.3.1
+1. Added missing 'current section' string.
+
+19th December 2012 - Version 2.3.2
+1. Fixed ability to use png files because of attempting to use jpeg quality setting.
+2. Increased quality setting for better icons.

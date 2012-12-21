@@ -1,4 +1,4 @@
-﻿GRID COURSE FORMAT
+GRID COURSE FORMAT
 ============================
 Package tested in: Moodle 2.3.1+ (Build: 20120802) 2012062501.07
 
@@ -91,3 +91,6 @@ HISTORY
 19th December 2012 - Version 2.3.2
 1. Fixed ability to use png files because of attempting to use jpeg quality setting.
 2. Increased quality setting for better icons.
+
+21st December 2012 - Version 2.3.2.1
+1. Fixed BOM (http://docs.moodle.org/23/en/UTF-8_and_BOM) issue in 'lib.php' and 'lang/ru/format_grid.php' which can cause the icons not to display.

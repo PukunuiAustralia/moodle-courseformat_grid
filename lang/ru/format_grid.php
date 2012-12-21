@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 $string['display_summary'] = 'Вынести из области сетки';
 $string['display_summary_alt'] = 'Вынести из области сетки';

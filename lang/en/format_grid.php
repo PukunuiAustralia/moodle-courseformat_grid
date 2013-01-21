@@ -20,3 +20,6 @@ $string['topicoutline'] = 'Topic';
 $string['hidefromothers'] = 'Hide topic';
 $string['showfromothers'] = 'Show topic';
 $string['currentsection'] = 'This topic';
+
+// Image did not convert.
+$string['imagecannotbeusedasanicon'] = 'Image cannot be used as an icon, must be a Gif, Jpg or Png and the GD PHP library installed.';

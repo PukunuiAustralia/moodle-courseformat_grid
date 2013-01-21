@@ -1,8 +1,8 @@
 GRID COURSE FORMAT
 ============================
-Package tested in: Moodle 2.3.1+ (Build: 20120802) 2012062501.07
+Package tested in: Moodle version 2012062504.01 release 2.3.4+ (Build: 20130118)
 
-Requires at least 2012062501.03 because of MDL-33767.
+Requires Moodle version 2012062504.01 release 2.3.4+ (Build: 20130118) because of MDL-36095.
 
 BETA DEVELOPMENT VERSION - NOT FOR PRODUCTION SITES - Please place comments / feedback on:
 http://tracker.moodle.org/browse/CONTRIB-3769 - preferred.
@@ -83,14 +83,33 @@ HISTORY
 =============
 
 13th July 2012 - Version 2.3
+Change by G J Barnard
 1. First release for Moodle 2.3
 
 22nd August 2012 - Version 2.3.1
+Change by G J Barnard
 1. Added missing 'current section' string.
 
 19th December 2012 - Version 2.3.2
+Change by G J Barnard
 1. Fixed ability to use png files because of attempting to use jpeg quality setting.
 2. Increased quality setting for better icons.
 
 21st December 2012 - Version 2.3.2.1
+Change by G J Barnard
 1. Fixed BOM (http://docs.moodle.org/23/en/UTF-8_and_BOM) issue in 'lib.php' and 'lang/ru/format_grid.php' which can cause the icons not to display.
+
+12th January 2013 - Version 2.3.2.2
+Change by G J Barnard
+1. Fixed inadvertent application of 2.4 code.
+2. Fixed issue in editimage.php where the GD library needs to be used for image conversion for transparent PNG's.
+3. Perform a 'Purge all caches' under 'Home -> Site administration -> Development -> Purge all caches' after this is installed.
+
+21st January 2013 - Version 2.3.2.3 - Beta version, not for production servers.
+Change by G J Barnard
+1. Changes to 'renderer.php' because of MDL-36095 hence requiring Moodle version 2012062504.01 release 2.3.4+ (Build: 20130118) and above.
+
+Authors
+-------
+J Ridden - Moodle profile: https://moodle.org/user/profile.php?id=39680 - Web: http://www.moodleman.net
+G J Barnard - Moodle profile: moodle.org/user/profile.php?id=442195 - Web profile: about.me/gjbarnard

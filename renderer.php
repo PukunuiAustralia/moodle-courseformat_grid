@@ -179,7 +179,7 @@ class format_grid_renderer extends format_section_renderer_base {
         }
         $o.= html_writer::end_tag('div');
 
-        $o .= $this->section_availability_message($section);
+        $o .= $this->section_availability_message($section,has_capability('moodle/course:viewhiddensections', $context));
 
         return $o;
     }
@@ -374,6 +374,7 @@ class format_grid_renderer extends format_section_renderer_base {
 
     private function make_block_topics($course, $sections, $editing, $has_cap_update, $has_cap_vishidsect, $mods, $modnames, $modnamesused, $str_edit_summary, $url_pic_edit, $onsectionpage) {
 
+        $context = context_course::instance($course->id);
         // Section 0 already displayed, so not an orphan for code below.
         unset($sections[0]);
         for ($section = 1; $section <= $course->numsections; $section++) {
@@ -432,7 +433,7 @@ class format_grid_renderer extends format_section_renderer_base {
                 }
                 echo html_writer::end_tag('div');
 
-                echo $this->section_availability_message($thissection);
+                echo $this->section_availability_message($thissection,has_capability('moodle/course:viewhiddensections', $context));
 
                 print_section($course, $thissection, $mods, $modnamesused);
 
@@ -443,7 +444,7 @@ class format_grid_renderer extends format_section_renderer_base {
                 echo html_writer::tag('h2', $this->get_title($thissection));
                 echo html_writer::tag('p', get_string('hidden_topic', 'format_grid'));
 
-                echo $this->section_availability_message($thissection);
+                echo $this->section_availability_message($thissection,has_capability('moodle/course:viewhiddensections', $context));
             }
 
             /* $this->section_header($thissection, $course, $onsectionpage);
